@@ -1167,7 +1167,7 @@
         <p>&copy; 2024 affemess shop</p>
     </footer>
 <script>
-   // Cart functionality
+  // Cart functionality
 let cart = [];
 let totalPrice = 0;
 
@@ -1287,29 +1287,25 @@ const searchButton = document.getElementById("searchButton");
 const searchResult = document.getElementById("searchResult");
 
 searchButton.addEventListener("click", () => {
-    const query = searchInput.value.trim().toLowerCase();
-    if (query === "") {
-        searchResult.textContent = "Please enter a product name.";
-        return;
-    }
+    const query = searchInput.value.trim().toLowerCase().split(" ");
 
-    // Find matching product card by partial name match
-    const productCard = Array.from(document.querySelectorAll('.product-card')).find(card =>
-        card.querySelector('h3').textContent.toLowerCase().includes(query) // Partial match
-    );
+    Array.from(document.querySelectorAll(".product-card")).forEach(card => {
+        const productName = card.querySelector("h3").textContent.toLowerCase();
+        const productDescription = (card.querySelector("p").textContent || "").toLowerCase();
 
-    if (productCard) {
-        const productImage = productCard.querySelector('img').src;
-        const productPrice = productCard.querySelector('p').textContent.slice(1);
-        showProductDetails(productImage, query, productPrice);
-        searchResult.textContent = ""; // Clear previous messages
-    } else if (productData[query]) {
-        const productImage = productData[query][0]?.image || "default-image.jpg";
-        const productPrice = "25.00"; // Placeholder price, adjust as necessary
-        showProductDetails(productImage, query, productPrice);
-        searchResult.textContent = ""; // Clear previous messages
+        const matches = query.some(keyword => productName.includes(keyword) || productDescription.includes(keyword));
+
+        if (matches) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+
+    if (document.querySelectorAll(".product-card:visible").length === 0) {
+        searchResult.textContent = "No products found for your search.";
     } else {
-        searchResult.textContent = `"${query}" not found. Please check the name or try another product.`;
+        searchResult.textContent = "";
     }
 });
 

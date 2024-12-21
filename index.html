@@ -169,8 +169,11 @@
         /* Home Section */
         .home-section {
             text-align: center;
-            padding: 50px 20px;
             background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow: hidden;
         }
 
         .home-section h2 {
@@ -190,6 +193,7 @@
       
         .shop-now-button:hover {
             background-color: #555;
+            color: white;
         }
 
         .shop-name {
@@ -281,10 +285,11 @@ body {
 .home-banner {
     position: relative;
     width: 100%;
-    height: 300px; /* Adjust height as desired */
+    height: auto; /* Automatically adjust height based on image */
     background-image: url('thumbnail-00.webp.jpg'); /* Replace with your image path */
-    background-size: cover;
-    background-position: center;
+    background-size: cover; /* Ensures the image covers the container */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents tiling */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -294,17 +299,17 @@ body {
 
 /* Text container inside the banner */
 .banner-text {
-    position: relative; /* To allow proper placement of text */
-    z-index: 2; /* Make sure it’s on top of the background */
-    padding: 0px;
-    background: rgba(0, 0, 0, 0.5); /* Optional: Add semi-transparent background for text */
-    border-radius: 10px; /* Optional: Rounded corners for text box */
-}
+    position: relative; /* Proper placement of text */
+    z-index: 2; /* Ensures it's above the banner */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for contrast */
+    padding: 20px; /* Adds spacing around the text */
+    border-radius: 10px; /* Optional rounded corners */
+       }
 
 .banner-text h2 {
-    margin: 0;
-    font-size: 2rem; /* Adjust text size as needed */
-    color: pink;
+     margin: 0;
+    font-size: 2.5rem; /* Adjust text size */
+    color: pink; /* Text color */
 }
 
 .banner-text p {

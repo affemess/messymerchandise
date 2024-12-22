@@ -1291,7 +1291,7 @@ body {
         <p>&copy; 2024 affemess shop</p>
     </footer>
 <script>
-  // Cart functionality
+    // Cart functionality
 let cart = [];
 let totalPrice = 0;
 
@@ -1305,17 +1305,23 @@ document.querySelectorAll(".add-to-cart").forEach(button => {
     button.addEventListener("click", (event) => {
         const name = event.target.getAttribute("data-name");
         const price = parseFloat(event.target.getAttribute("data-price"));
+        const image = event.target.getAttribute("data-image");
+        const description = event.target.getAttribute("data-description");
+        const size = event.target.getAttribute("data-size"); // Fetch selected size
 
         // Redirect to WhatsApp
-        sendToWhatsApp(name, price);
+        sendToWhatsApp(name, price, image, description, size);
     });
 });
 
-function sendToWhatsApp(productName, productPrice) {
+function sendToWhatsApp(productName, productPrice, productImage, productDescription, productSize) {
     const phoneNumber = "+254769079296"; // Replace with your WhatsApp number
     const message = `Hello, I would like to order the following product:\n\n` +
         `Product: ${productName}\n` +
-        `Price: $${productPrice.toFixed(2)}\n\n` +
+        `Price: $${productPrice.toFixed(2)}\n` +
+        `Description: ${productDescription}\n` +
+        `Selected Size: ${productSize || "Not Selected"}\n` +
+        `Image: ${productImage}\n\n` +
         `Thank you!`;
 
     // Encode message for URL
@@ -1326,66 +1332,55 @@ function sendToWhatsApp(productName, productPrice) {
 }
 
 // Product details modal functionality
-function showProductDetails(imageSrc, name, price) {
+function showProductDetails(imageSrc, name, price, description, sizes) {
     const productModal = document.getElementById("productModal");
     const modalProductImage = document.getElementById("modalProductImage");
     const modalProductName = document.getElementById("modalProductName");
     const modalProductPrice = document.getElementById("modalProductPrice");
-    const modalProductDesc = document.getElementById("modalProductDescription"); // Assuming you have a description element
+    const modalProductDesc = document.getElementById("modalProductDescription");
     const modalAddToCartButton = document.getElementById("modalAddToCartButton");
+    const modalSizesContainer = document.getElementById("modalSizesContainer"); // Assuming a container for sizes
 
     modalProductImage.src = imageSrc;
     modalProductName.textContent = name;
     modalProductPrice.textContent = `$${price}`;
+    modalProductDesc.textContent = description;
     productModal.style.display = "flex";
 
-    // Update Add to Cart button functionality
-    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price));
-
-    // Update related products dynamically
-    const relatedProductsContainer = document.querySelector(".related-products");
-    relatedProductsContainer.innerHTML = ""; // Clear previous related products
-
-    const relatedItems = productData[name] || [];
-    relatedItems.forEach(({ name: relatedName, image }) => {
-        const relatedCard = document.createElement("div");
-        relatedCard.classList.add("product-card");
-
-        relatedCard.innerHTML = `
-            <img src="${image}" alt="${relatedName}">
-            <h3>${relatedName}</h3>
-            <p>$25.00</p>
-            <button class="add-to-cart" data-name="${relatedName}" data-price="25.00">Add to Cart</button>
-        `;
-
-        relatedProductsContainer.appendChild(relatedCard);
-    });
-
-    // Attach event listeners to dynamically added "Add to Cart" buttons
-    relatedProductsContainer.querySelectorAll(".add-to-cart").forEach(button => {
-        button.addEventListener("click", (event) => {
-            const relatedName = event.target.getAttribute("data-name");
-            const relatedPrice = parseFloat(event.target.getAttribute("data-price"));
-
-            // Redirect to WhatsApp
-            sendToWhatsApp(relatedName, relatedPrice);
+    // Render sizes as buttons
+    modalSizesContainer.innerHTML = ""; // Clear previous sizes
+    sizes.forEach(size => {
+        const sizeButton = document.createElement("button");
+        sizeButton.classList.add("size-button");
+        sizeButton.textContent = size;
+        sizeButton.addEventListener("click", () => {
+            document.querySelectorAll(".size-button").forEach(btn => btn.classList.remove("selected"));
+            sizeButton.classList.add("selected");
+            modalAddToCartButton.setAttribute("data-size", size); // Save selected size
         });
+        modalSizesContainer.appendChild(sizeButton);
     });
+
+    // Update Add to Cart button functionality
+    modalAddToCartButton.onclick = () => {
+        const selectedSize = modalAddToCartButton.getAttribute("data-size") || "Not Selected";
+        sendToWhatsApp(name, parseFloat(price), imageSrc, description, selectedSize);
+    };
 }
 
 // Related product data
 const productData = {
     "Basic T-Shirt": [
-        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg" },
-        { name: "Casual Polo", image: "casual-polo.jpg" }
+        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg", sizes: ["S", "M", "L", "XL"] },
+        { name: "Casual Polo", image: "casual-polo.jpg", sizes: ["M", "L"] }
     ],
     "Graphic T-Shirt": [
-        { name: "Basic T-Shirt", image: "basic-tshirt.jpg" },
-        { name: "Printed Hoodie", image: "printed-hoodie.jpg" }
+        { name: "Basic T-Shirt", image: "basic-tshirt.jpg", sizes: ["S", "M", "L"] },
+        { name: "Printed Hoodie", image: "printed-hoodie.jpg", sizes: ["M", "L", "XL"] }
     ],
     "Casual Polo": [
-        { name: "Basic T-Shirt", image: "basic-tshirt.jpg" },
-        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg" }
+        { name: "Basic T-Shirt", image: "basic-tshirt.jpg", sizes: ["S", "M"] },
+        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg", sizes: ["L", "XL"] }
     ]
 };
 
@@ -1395,7 +1390,10 @@ productCards.forEach(card => {
         const name = card.querySelector("h3").textContent;
         const price = card.querySelector("p").textContent.slice(1); // Remove $ sign
         const imageSrc = card.querySelector("img").src;
-        showProductDetails(imageSrc, name, price);
+        const description = "This is a detailed product description."; // Provide a default or fetched description
+        const sizes = ["S", "M", "L", "XL"]; // Example sizes
+
+        showProductDetails(imageSrc, name, price, description, sizes);
     });
 });
 
@@ -1434,5 +1432,5 @@ searchButton.addEventListener("click", () => {
 });
 
 </script>
-    
 </body>
+ 

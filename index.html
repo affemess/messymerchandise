@@ -1291,7 +1291,7 @@ body {
         <p>&copy; 2024 affemess shop</p>
     </footer>
 <script>
-    // Cart functionality
+   // Cart functionality
 let cart = [];
 let totalPrice = 0;
 
@@ -1301,27 +1301,25 @@ const closeModal = document.getElementById("closeModal");
 const cartItems = document.getElementById("cartItems");
 const totalPriceElem = document.getElementById("totalPrice");
 
+// Track selected size
+let selectedSize = "";
+
 document.querySelectorAll(".add-to-cart").forEach(button => {
     button.addEventListener("click", (event) => {
         const name = event.target.getAttribute("data-name");
         const price = parseFloat(event.target.getAttribute("data-price"));
-        const image = event.target.getAttribute("data-image");
-        const description = event.target.getAttribute("data-description");
-        const size = event.target.getAttribute("data-size"); // Fetch selected size
 
         // Redirect to WhatsApp
-        sendToWhatsApp(name, price, image, description, size);
+        sendToWhatsApp(name, price, selectedSize);
     });
 });
 
-function sendToWhatsApp(productName, productPrice, productImage, productDescription, productSize) {
+function sendToWhatsApp(productName, productPrice, productSize) {
     const phoneNumber = "+254769079296"; // Replace with your WhatsApp number
     const message = `Hello, I would like to order the following product:\n\n` +
         `Product: ${productName}\n` +
         `Price: $${productPrice.toFixed(2)}\n` +
-        `Description: ${productDescription}\n` +
-        `Selected Size: ${productSize || "Not Selected"}\n` +
-        `Image: ${productImage}\n\n` +
+        `Size: ${productSize || "Not Selected"}\n\n` +
         `Thank you!`;
 
     // Encode message for URL
@@ -1332,40 +1330,38 @@ function sendToWhatsApp(productName, productPrice, productImage, productDescript
 }
 
 // Product details modal functionality
-function showProductDetails(imageSrc, name, price, description, sizes) {
+function showProductDetails(imageSrc, name, price, sizes) {
     const productModal = document.getElementById("productModal");
     const modalProductImage = document.getElementById("modalProductImage");
     const modalProductName = document.getElementById("modalProductName");
     const modalProductPrice = document.getElementById("modalProductPrice");
     const modalProductDesc = document.getElementById("modalProductDescription");
+    const modalSizesContainer = document.getElementById("modalSizesContainer"); // Size buttons container
     const modalAddToCartButton = document.getElementById("modalAddToCartButton");
-    const modalSizesContainer = document.getElementById("modalSizesContainer"); // Assuming a container for sizes
 
     modalProductImage.src = imageSrc;
     modalProductName.textContent = name;
     modalProductPrice.textContent = `$${price}`;
-    modalProductDesc.textContent = description;
     productModal.style.display = "flex";
 
-    // Render sizes as buttons
-    modalSizesContainer.innerHTML = ""; // Clear previous sizes
+    // Render size buttons dynamically
+    modalSizesContainer.innerHTML = ""; // Clear previous buttons
     sizes.forEach(size => {
         const sizeButton = document.createElement("button");
         sizeButton.classList.add("size-button");
         sizeButton.textContent = size;
+
         sizeButton.addEventListener("click", () => {
             document.querySelectorAll(".size-button").forEach(btn => btn.classList.remove("selected"));
             sizeButton.classList.add("selected");
-            modalAddToCartButton.setAttribute("data-size", size); // Save selected size
+            selectedSize = size; // Save the selected size
         });
+
         modalSizesContainer.appendChild(sizeButton);
     });
 
     // Update Add to Cart button functionality
-    modalAddToCartButton.onclick = () => {
-        const selectedSize = modalAddToCartButton.getAttribute("data-size") || "Not Selected";
-        sendToWhatsApp(name, parseFloat(price), imageSrc, description, selectedSize);
-    };
+    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price), selectedSize);
 }
 
 // Related product data
@@ -1390,10 +1386,9 @@ productCards.forEach(card => {
         const name = card.querySelector("h3").textContent;
         const price = card.querySelector("p").textContent.slice(1); // Remove $ sign
         const imageSrc = card.querySelector("img").src;
-        const description = "This is a detailed product description."; // Provide a default or fetched description
-        const sizes = ["S", "M", "L", "XL"]; // Example sizes
+        const sizes = productData[name]?.[0]?.sizes || ["S", "M", "L", "XL"]; // Example sizes
 
-        showProductDetails(imageSrc, name, price, description, sizes);
+        showProductDetails(imageSrc, name, price, sizes);
     });
 });
 
@@ -1430,6 +1425,7 @@ searchButton.addEventListener("click", () => {
         searchResult.textContent = "";
     }
 });
+
 
 </script>
 </body>

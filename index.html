@@ -1301,7 +1301,7 @@ const closeModal = document.getElementById("closeModal");
 const cartItems = document.getElementById("cartItems");
 const totalPriceElem = document.getElementById("totalPrice");
 
-// Track selected size
+// Track selected size globally
 let selectedSize = "";
 
 document.querySelectorAll(".add-to-cart").forEach(button => {
@@ -1309,23 +1309,31 @@ document.querySelectorAll(".add-to-cart").forEach(button => {
         const name = event.target.getAttribute("data-name");
         const price = parseFloat(event.target.getAttribute("data-price"));
 
-        // Redirect to WhatsApp
+        // Check if size is selected, if not, alert user
+        if (!selectedSize) {
+            alert("Please select a size.");
+            return;
+        }
+
+        // Redirect to WhatsApp with product details including size
         sendToWhatsApp(name, price, selectedSize);
     });
 });
 
 function sendToWhatsApp(productName, productPrice, productSize) {
     const phoneNumber = "+254769079296"; // Replace with your WhatsApp number
+
+    // Construct the message
     const message = `Hello, I would like to order the following product:\n\n` +
         `Product: ${productName}\n` +
         `Price: $${productPrice.toFixed(2)}\n` +
         `Size: ${productSize || "Not Selected"}\n\n` +
         `Thank you!`;
 
-    // Encode message for URL
+    // Encode message for URL (URL-encode message so that it's readable in the WhatsApp typing bar)
     const encodedMessage = encodeURIComponent(message);
 
-    // Redirect to WhatsApp
+    // Redirect to WhatsApp with the message
     window.location.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 }
 
@@ -1335,7 +1343,6 @@ function showProductDetails(imageSrc, name, price, sizes) {
     const modalProductImage = document.getElementById("modalProductImage");
     const modalProductName = document.getElementById("modalProductName");
     const modalProductPrice = document.getElementById("modalProductPrice");
-    const modalProductDesc = document.getElementById("modalProductDescription");
     const modalSizesContainer = document.getElementById("modalSizesContainer"); // Size buttons container
     const modalAddToCartButton = document.getElementById("modalAddToCartButton");
 
@@ -1361,7 +1368,13 @@ function showProductDetails(imageSrc, name, price, sizes) {
     });
 
     // Update Add to Cart button functionality
-    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price), selectedSize);
+    modalAddToCartButton.onclick = () => {
+        if (selectedSize) {
+            sendToWhatsApp(name, parseFloat(price), selectedSize);
+        } else {
+            alert("Please select a size.");
+        }
+    };
 }
 
 // Related product data

@@ -1291,7 +1291,7 @@ body {
         <p>&copy; 2024 affemess shop</p>
     </footer>
 <script>
-// Cart functionality
+ // Cart functionality
 let cart = [];
 let totalPrice = 0;
 
@@ -1301,25 +1301,21 @@ const closeModal = document.getElementById("closeModal");
 const cartItems = document.getElementById("cartItems");
 const totalPriceElem = document.getElementById("totalPrice");
 
-// Track selected size
-let selectedSize = "";
-
 document.querySelectorAll(".add-to-cart").forEach(button => {
     button.addEventListener("click", (event) => {
         const name = event.target.getAttribute("data-name");
         const price = parseFloat(event.target.getAttribute("data-price"));
 
         // Redirect to WhatsApp
-        sendToWhatsApp(name, price, selectedSize);
+        sendToWhatsApp(name, price);
     });
 });
 
-function sendToWhatsApp(productName, productPrice, productSize) {
+function sendToWhatsApp(productName, productPrice) {
     const phoneNumber = "+254769079296"; // Replace with your WhatsApp number
     const message = Hello, I would like to order the following product:\n\n +
         Product: ${productName}\n +
-        Price: $${productPrice.toFixed(2)}\n +
-        Size: ${productSize || "Not Selected"}\n\n +
+        Price: $${productPrice.toFixed(2)}\n\n +
         Thank you!;
 
     // Encode message for URL
@@ -1330,13 +1326,12 @@ function sendToWhatsApp(productName, productPrice, productSize) {
 }
 
 // Product details modal functionality
-function showProductDetails(imageSrc, name, price, sizes) {
+function showProductDetails(imageSrc, name, price) {
     const productModal = document.getElementById("productModal");
     const modalProductImage = document.getElementById("modalProductImage");
     const modalProductName = document.getElementById("modalProductName");
     const modalProductPrice = document.getElementById("modalProductPrice");
-    const modalProductDesc = document.getElementById("modalProductDescription");
-    const modalSizesContainer = document.getElementById("modalSizesContainer"); // Size buttons container
+    const modalProductDesc = document.getElementById("modalProductDescription"); // Assuming you have a description element
     const modalAddToCartButton = document.getElementById("modalAddToCartButton");
 
     modalProductImage.src = imageSrc;
@@ -1344,39 +1339,53 @@ function showProductDetails(imageSrc, name, price, sizes) {
     modalProductPrice.textContent = $${price};
     productModal.style.display = "flex";
 
-    // Render size buttons dynamically
-    modalSizesContainer.innerHTML = ""; // Clear previous buttons
-    sizes.forEach(size => {
-        const sizeButton = document.createElement("button");
-        sizeButton.classList.add("size-button");
-        sizeButton.textContent = size;
+    // Update Add to Cart button functionality
+    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price));
 
-        sizeButton.addEventListener("click", () => {
-            document.querySelectorAll(".size-button").forEach(btn => btn.classList.remove("selected"));
-            sizeButton.classList.add("selected");
-            selectedSize = size; // Save the selected size
-        });
+    // Update related products dynamically
+    const relatedProductsContainer = document.querySelector(".related-products");
+    relatedProductsContainer.innerHTML = ""; // Clear previous related products
 
-        modalSizesContainer.appendChild(sizeButton);
+    const relatedItems = productData[name] || [];
+    relatedItems.forEach(({ name: relatedName, image }) => {
+        const relatedCard = document.createElement("div");
+        relatedCard.classList.add("product-card");
+
+        relatedCard.innerHTML = 
+            <img src="${image}" alt="${relatedName}">
+            <h3>${relatedName}</h3>
+            <p>$25.00</p>
+            <button class="add-to-cart" data-name="${relatedName}" data-price="25.00">Add to Cart</button>
+        ;
+
+        relatedProductsContainer.appendChild(relatedCard);
     });
 
-    // Update Add to Cart button functionality
-    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price), selectedSize);
+    // Attach event listeners to dynamically added "Add to Cart" buttons
+    relatedProductsContainer.querySelectorAll(".add-to-cart").forEach(button => {
+        button.addEventListener("click", (event) => {
+            const relatedName = event.target.getAttribute("data-name");
+            const relatedPrice = parseFloat(event.target.getAttribute("data-price"));
+
+            // Redirect to WhatsApp
+            sendToWhatsApp(relatedName, relatedPrice);
+        });
+    });
 }
 
 // Related product data
 const productData = {
     "Basic T-Shirt": [
-        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg", sizes: ["S", "M", "L", "XL"] },
-        { name: "Casual Polo", image: "casual-polo.jpg", sizes: ["M", "L"] }
+        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg" },
+        { name: "Casual Polo", image: "casual-polo.jpg" }
     ],
     "Graphic T-Shirt": [
-        { name: "Basic T-Shirt", image: "basic-tshirt.jpg", sizes: ["S", "M", "L"] },
-        { name: "Printed Hoodie", image: "printed-hoodie.jpg", sizes: ["M", "L", "XL"] }
+        { name: "Basic T-Shirt", image: "basic-tshirt.jpg" },
+        { name: "Printed Hoodie", image: "printed-hoodie.jpg" }
     ],
     "Casual Polo": [
-        { name: "Basic T-Shirt", image: "basic-tshirt.jpg", sizes: ["S", "M"] },
-        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg", sizes: ["L", "XL"] }
+        { name: "Basic T-Shirt", image: "basic-tshirt.jpg" },
+        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg" }
     ]
 };
 
@@ -1386,9 +1395,7 @@ productCards.forEach(card => {
         const name = card.querySelector("h3").textContent;
         const price = card.querySelector("p").textContent.slice(1); // Remove $ sign
         const imageSrc = card.querySelector("img").src;
-        const sizes = productData[name]?.[0]?.sizes || ["S", "M", "L", "XL"]; // Example sizes
-
-        showProductDetails(imageSrc, name, price, sizes);
+        showProductDetails(imageSrc, name, price);
     });
 });
 
@@ -1426,7 +1433,9 @@ searchButton.addEventListener("click", () => {
     }
 });
 
-
+ChatGPT said:
+ChatGPT
+Here’s an updated version of your script with the requested
 
 
 </script>

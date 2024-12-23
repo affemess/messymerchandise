@@ -1301,7 +1301,7 @@ const closeModal = document.getElementById("closeModal");
 const cartItems = document.getElementById("cartItems");
 const totalPriceElem = document.getElementById("totalPrice");
 
-// Track selected size globally
+// Track selected size
 let selectedSize = "";
 
 document.querySelectorAll(".add-to-cart").forEach(button => {
@@ -1309,32 +1309,24 @@ document.querySelectorAll(".add-to-cart").forEach(button => {
         const name = event.target.getAttribute("data-name");
         const price = parseFloat(event.target.getAttribute("data-price"));
 
-        // Check if size is selected, if not, alert user
-        if (!selectedSize) {
-            alert("Please select a size.");
-            return;
-        }
-
-        // Redirect to WhatsApp with product details including size
+        // Redirect to WhatsApp
         sendToWhatsApp(name, price, selectedSize);
     });
 });
 
 function sendToWhatsApp(productName, productPrice, productSize) {
     const phoneNumber = "+254769079296"; // Replace with your WhatsApp number
+    const message = Hello, I would like to order the following product:\n\n +
+        Product: ${productName}\n +
+        Price: $${productPrice.toFixed(2)}\n +
+        Size: ${productSize || "Not Selected"}\n\n +
+        Thank you!;
 
-    // Construct the message
-    const message = `Hello, I would like to order the following product:\n\n` +
-        `Product: ${productName}\n` +
-        `Price: $${productPrice.toFixed(2)}\n` +
-        `Size: ${productSize || "Not Selected"}\n\n` +
-        `Thank you!`;
-
-    // Encode message for URL (URL-encode message so that it's readable in the WhatsApp typing bar)
+    // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
 
-    // Redirect to WhatsApp with the message
-    window.location.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    // Redirect to WhatsApp
+    window.location.href = https://wa.me/${phoneNumber}?text=${encodedMessage};
 }
 
 // Product details modal functionality
@@ -1343,12 +1335,13 @@ function showProductDetails(imageSrc, name, price, sizes) {
     const modalProductImage = document.getElementById("modalProductImage");
     const modalProductName = document.getElementById("modalProductName");
     const modalProductPrice = document.getElementById("modalProductPrice");
+    const modalProductDesc = document.getElementById("modalProductDescription");
     const modalSizesContainer = document.getElementById("modalSizesContainer"); // Size buttons container
     const modalAddToCartButton = document.getElementById("modalAddToCartButton");
 
     modalProductImage.src = imageSrc;
     modalProductName.textContent = name;
-    modalProductPrice.textContent = `$${price}`;
+    modalProductPrice.textContent = $${price};
     productModal.style.display = "flex";
 
     // Render size buttons dynamically
@@ -1368,13 +1361,7 @@ function showProductDetails(imageSrc, name, price, sizes) {
     });
 
     // Update Add to Cart button functionality
-    modalAddToCartButton.onclick = () => {
-        if (selectedSize) {
-            sendToWhatsApp(name, parseFloat(price), selectedSize);
-        } else {
-            alert("Please select a size.");
-        }
-    };
+    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price), selectedSize);
 }
 
 // Related product data
@@ -1438,6 +1425,8 @@ searchButton.addEventListener("click", () => {
         searchResult.textContent = "";
     }
 });
+
+
 
 </script>
 </body>

@@ -1291,7 +1291,7 @@ body {
         <p>&copy; 2024 affemess shop</p>
     </footer>
 <script>
- // Cart functionality
+// Cart functionality
 let cart = [];
 let totalPrice = 0;
 
@@ -1305,58 +1305,63 @@ document.querySelectorAll(".add-to-cart").forEach(button => {
     button.addEventListener("click", (event) => {
         const name = event.target.getAttribute("data-name");
         const price = parseFloat(event.target.getAttribute("data-price"));
+        const description = event.target.getAttribute("data-description") || "No description available";
 
         // Redirect to WhatsApp
-        sendToWhatsApp(name, price);
+        sendToWhatsApp(name, price, description);
     });
 });
 
-function sendToWhatsApp(productName, productPrice) {
+function sendToWhatsApp(productName, productPrice, productDescription) {
     const phoneNumber = "+254769079296"; // Replace with your WhatsApp number
-    const message = Hello, I would like to order the following product:\n\n +
-        Product: ${productName}\n +
-        Price: $${productPrice.toFixed(2)}\n\n +
-        Thank you!;
+    const message = `Hello, I would like to order the following product:
+
+Product: ${productName}
+Price: $${productPrice.toFixed(2)}
+Description: ${productDescription}
+
+Thank you!`;
 
     // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
 
     // Redirect to WhatsApp
-    window.location.href = https://wa.me/${phoneNumber}?text=${encodedMessage};
+    window.location.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 }
 
 // Product details modal functionality
-function showProductDetails(imageSrc, name, price) {
+function showProductDetails(imageSrc, name, price, description = "No description available") {
     const productModal = document.getElementById("productModal");
     const modalProductImage = document.getElementById("modalProductImage");
     const modalProductName = document.getElementById("modalProductName");
     const modalProductPrice = document.getElementById("modalProductPrice");
-    const modalProductDesc = document.getElementById("modalProductDescription"); // Assuming you have a description element
+    const modalProductDesc = document.getElementById("modalProductDescription");
     const modalAddToCartButton = document.getElementById("modalAddToCartButton");
 
     modalProductImage.src = imageSrc;
     modalProductName.textContent = name;
-    modalProductPrice.textContent = $${price};
+    modalProductPrice.textContent = `$${price}`;
+    if (modalProductDesc) modalProductDesc.textContent = description;
     productModal.style.display = "flex";
 
     // Update Add to Cart button functionality
-    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price));
+    modalAddToCartButton.onclick = () => sendToWhatsApp(name, parseFloat(price), description);
 
     // Update related products dynamically
     const relatedProductsContainer = document.querySelector(".related-products");
     relatedProductsContainer.innerHTML = ""; // Clear previous related products
 
     const relatedItems = productData[name] || [];
-    relatedItems.forEach(({ name: relatedName, image }) => {
+    relatedItems.forEach(({ name: relatedName, image, description: relatedDescription }) => {
         const relatedCard = document.createElement("div");
         relatedCard.classList.add("product-card");
 
-        relatedCard.innerHTML = 
+        relatedCard.innerHTML = `
             <img src="${image}" alt="${relatedName}">
             <h3>${relatedName}</h3>
             <p>$25.00</p>
-            <button class="add-to-cart" data-name="${relatedName}" data-price="25.00">Add to Cart</button>
-        ;
+            <button class="add-to-cart" data-name="${relatedName}" data-price="25.00" data-description="${relatedDescription || 'No description available'}">Add to Cart</button>
+        `;
 
         relatedProductsContainer.appendChild(relatedCard);
     });
@@ -1366,9 +1371,10 @@ function showProductDetails(imageSrc, name, price) {
         button.addEventListener("click", (event) => {
             const relatedName = event.target.getAttribute("data-name");
             const relatedPrice = parseFloat(event.target.getAttribute("data-price"));
+            const relatedDescription = event.target.getAttribute("data-description") || "No description available";
 
             // Redirect to WhatsApp
-            sendToWhatsApp(relatedName, relatedPrice);
+            sendToWhatsApp(relatedName, relatedPrice, relatedDescription);
         });
     });
 }
@@ -1376,16 +1382,16 @@ function showProductDetails(imageSrc, name, price) {
 // Related product data
 const productData = {
     "Basic T-Shirt": [
-        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg" },
-        { name: "Casual Polo", image: "casual-polo.jpg" }
+        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg", description: "Comfortable cotton t-shirt." },
+        { name: "Casual Polo", image: "casual-polo.jpg", description: "Stylish casual polo shirt." }
     ],
     "Graphic T-Shirt": [
-        { name: "Basic T-Shirt", image: "basic-tshirt.jpg" },
-        { name: "Printed Hoodie", image: "printed-hoodie.jpg" }
+        { name: "Basic T-Shirt", image: "basic-tshirt.jpg", description: "A classic, versatile t-shirt." },
+        { name: "Printed Hoodie", image: "printed-hoodie.jpg", description: "Warm and stylish hoodie." }
     ],
     "Casual Polo": [
-        { name: "Basic T-Shirt", image: "basic-tshirt.jpg" },
-        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg" }
+        { name: "Basic T-Shirt", image: "basic-tshirt.jpg", description: "Great for everyday wear." },
+        { name: "Graphic T-Shirt", image: "graphic-tshirt.jpg", description: "Unique and trendy designs." }
     ]
 };
 
@@ -1395,7 +1401,8 @@ productCards.forEach(card => {
         const name = card.querySelector("h3").textContent;
         const price = card.querySelector("p").textContent.slice(1); // Remove $ sign
         const imageSrc = card.querySelector("img").src;
-        showProductDetails(imageSrc, name, price);
+        const description = card.getAttribute("data-description") || "No description available";
+        showProductDetails(imageSrc, name, price, description);
     });
 });
 
@@ -1415,7 +1422,7 @@ searchButton.addEventListener("click", () => {
 
     Array.from(document.querySelectorAll(".product-card")).forEach(card => {
         const productName = card.querySelector("h3").textContent.toLowerCase();
-        const productDescription = (card.querySelector("p").textContent || "").toLowerCase();
+        const productDescription = (card.getAttribute("data-description") || "").toLowerCase();
 
         const matches = query.some(keyword => productName.includes(keyword) || productDescription.includes(keyword));
 
@@ -1426,13 +1433,16 @@ searchButton.addEventListener("click", () => {
         }
     });
 
-    if (document.querySelectorAll(".product-card:visible").length === 0) {
+    const visibleCards = Array.from(document.querySelectorAll(".product-card")).filter(card => 
+        card.style.display !== "none"
+    );
+
+    if (visibleCards.length === 0) {
         searchResult.textContent = "No products found for your search.";
     } else {
         searchResult.textContent = "";
     }
 });
-
 
 </script>
 </body>

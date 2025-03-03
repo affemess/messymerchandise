@@ -12,15 +12,85 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            color: green;
-        }
+        
 
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    Color: green;  
+    background-color: #f4f4f4;
+           
+           
+}
+
+/* Ensures images resize within their containers */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive text */
+h1 {
+    font-size: 2rem; /* Default for small screens */
+}
+
+p {
+    font-size: 1rem;
+}
+
+/* Mobile-first approach (default styles for small screens) */
+.container {
+    width: 100%;
+    padding: 10px;
+}
+
+/* Tablet screens (min-width: 600px) */
+@media (min-width: 600px) {
+    .container {
+        max-width: 80%;
+        margin: auto;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+}
+
+/* Desktop screens (min-width: 1024px) */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 60%;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+}
+
+/* Large desktops (min-width: 1440px) */
+@media (min-width: 1440px) {
+    .container {
+        max-width: 50%;
+    }
+
+    h1 {
+        font-size: 3.5rem;
+    }
+
+    p {
+        font-size: 1.3rem;
+    }
+}
         header {
             background-color: #333;
             color: white;
